@@ -17,7 +17,8 @@
 ### 1. 克隆项目
 
 ```bash
-cd .codebuddy/skills/xiaohongshu-automation
+git clone https://github.com/vinwang/xiaohongshu-automation.git
+cd xiaohongshu-automation
 ```
 
 ### 2. 安装依赖
