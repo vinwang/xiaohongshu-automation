@@ -1,4 +1,4 @@
-# 小红书自动化发布工具 - 本地化版本
+# 小红书自动化发布工具
 
 完全本地化的小红书内容生成、图片创建、预览确认和发布工具，无需依赖 n8n。
 
@@ -7,176 +7,247 @@
 - ✅ **智能内容生成** - 二极管标题法、结构化正文、智能标签
 - ✅ **AI 图片生成** - 火山引擎 Doubao-Seedream 生成高质量封面和内容图
 - ✅ **交互式预览** - 浏览器实时预览、图片轮播、定时选择
-- ✅ **命令行工具** - 简洁的 CLI 界面，支持交互式和参数化调用
+- ✅ **单文件运行** - 单个 Python 文件，无需构建
+- ✅ **简单配置** - 支持环境变量或交互式输入
 - ✅ **灵活发布** - 支持立即发布、定时发布、快速发布
-- ✅ **历史记录** - 自动保存发布记录，支持查询
-- ✅ **完全本地化** - 无需 n8n，直接在本地运行
 
-## 安装
+## 快速开始
 
-### 1. 克隆项目
+### 1. 安装依赖
 
 ```bash
-git clone https://github.com/vinwang/xiaohongshu-automation.git
-cd xiaohongshu-automation
+pip install -r requirements.txt
 ```
 
-### 2. 安装依赖
+### 2. 配置
+
+编辑 `.env` 文件：
 
 ```bash
-npm install
-```
-
-### 3. 配置环境变量
-
-```bash
-# 复制示例配置文件
+# 复制示例配置
 cp .env.example .env
 
-# 编辑 .env 文件，填入你的 API Key 和 Cookie
+# 编辑 .env 文件
 ```
 
-或使用 CLI 命令配置：
+配置内容：
+
+```env
+# 火山引擎 API 配置
+XHS_API_KEY=your_api_key_here
+XHS_API_ENDPOINT=https://ark.cn-beijing.volces.com/api/v3
+XHS_MODEL=doubao-seed-1-8-251228
+XHS_IMAGE_MODEL=doubao-seedream-4-5-251128
+
+# MCP 服务端配置（可选）
+XHS_MCP_URL=http://your-mcp-server/mcp
+XHS_MCP_TOOL=publish_content
+
+# 默认配置
+XHS_DEFAULT_ACCOUNT=你的账号
+XHS_DEFAULT_WORD_COUNT=500
+XHS_OUTPUT_DIR=./output
+```
+
+**配置方式**：
+1. **.env 文件**（推荐）- 编辑 `.env` 文件
+2. **环境变量** - 设置环境变量
+3. **交互式输入** - 运行时提示输入
+
+### 3. 运行
+
+**方式 1: 使用启动脚本（推荐）**
 
 ```bash
-npm run dev config
+# Windows
+run.bat
+
+# Linux/macOS
+./run.sh
+
+# 或使用 Python
+python run.py
+```
+
+**方式 2: 直接运行主程序**
+
+```bash
+python src/xhs_auto.py
+```
+
+**命令行参数**
+
+```bash
+python run.py -t "AI写作工具"          # 命令行模式
+python run.py -t "AI写作工具" -q        # 快速发布
+python run.py -t "AI写作工具" -g        # 只生成内容
 ```
 
 ## 使用方法
 
-### 方式 1: 交互式发布
+### 交互式模式
+
+运行 `python xhs_auto.py` 后，程序会提示你输入：
+
+1. **主题/选题** - 你想写什么
+2. **账号** - 发布到哪个账号
+3. **字数** - 正文字数（默认 500）
+4. **背景** - 相关背景信息（可选）
+
+然后会自动：
+- 生成标题、正文、标签
+- 生成封面图和内容图
+- 在浏览器中预览
+- 等待你的确认
+- 发布或定时发布
+
+### 命令行参数
 
 ```bash
-npm run dev publish
+python xhs_auto.py [选项]
+
+选项:
+  -t, --topic TEXT       主题/选题
+  -a, --account TEXT     账号名称
+  -w, --words INT        字数（默认：500）
+  -c, --context TEXT     背景信息
+  -q, --quick            快速发布（跳过预览）
+  -g, --generate-only    只生成内容，不发布
+  --dry-run             模拟运行，不实际发布
+  --help                显示帮助信息
 ```
 
-按照提示输入主题、账号、字数等信息。
+### 配置方式
 
-### 方式 2: 命令行参数
+支持三种配置方式（优先级从高到低）：
 
-```bash
-# 基本发布
-npm run dev publish -t "AI写作工具"
+1. **环境变量** - 最高优先级
+2. **.env 文件** - 自动加载（推荐）
+3. **交互式输入** - 运行时提示
 
-# 完整参数
-npm run dev publish -t "AI写作工具" -a "张三,李四" -w 500 -c "介绍AI写作的优势"
+**必需配置**：
+- `XHS_API_KEY` - 火山引擎 API Key
 
-# 快速发布（跳过预览）
-npm run dev publish -t "AI写作工具" -q
-
-# 只生成内容，不发布
-npm run dev publish -t "AI写作工具" -g
-```
-
-### 查看历史记录
-
-```bash
-npm run dev history
-```
-
-### 配置环境变量
-
-```bash
-npm run dev config
-```
+**可选配置**：
+- `XHS_API_ENDPOINT` - API 端点（默认：https://ark.cn-beijing.volces.com/api/v3）
+- `XHS_MODEL` - 文本模型（默认：doubao-seed-1-8-251228）
+- `XHS_IMAGE_MODEL` - 图片模型（默认：doubao-seedream-4-5-251128）
+- `XHS_MCP_URL` - MCP 服务端地址
+- `XHS_MCP_TOOL` - MCP 工具名称（默认：publish_content）
+- `XHS_DEFAULT_ACCOUNT` - 默认账号
+- `XHS_DEFAULT_WORD_COUNT` - 默认字数（默认：500）
+- `XHS_OUTPUT_DIR` - 输出目录（默认：./output）
 
 ## 工作流程
 
-1. **输入解析** - 接收主题、账号、字数、背景等信息
-2. **内容生成** - 使用二极管标题法生成标题，创建结构化正文
-3. **图片生成** - 根据内容生成封面图和内容图
-4. **预览确认** - 在浏览器中预览生成的笔记
-5. **发布** - 立即发布或定时发布到小红书
+1. **输入** - 提供主题、账号、字数、背景
+2. **生成内容** - AI 生成标题、正文、标签（二极管标题法）
+3. **生成图片** - AI 生成封面和内容图（火山引擎）
+4. **预览确认** - 浏览器预览，确认发布
+5. **发布** - 立即发布或定时发布
 
 ## 配置说明
 
-### 火山引擎配置
+### 必需配置
 
-- `DOUBAO_API_KEY` - 火山引擎 API Key
-- `DOUBAO_MODEL` - 豆包模型名称（默认: doubao-seed-1-8-251228）
-- `DOUBAO_BASE_URL` - API 基础 URL
+#### 火山引擎 API Key
 
-### 小红书配置
+用于调用豆包大模型生成内容和图片。
 
-- `XHS_COOKIE` - 小红书登录 Cookie
-- `MCP_URL` - MCP 服务端 URL（可选）
+**配置方式**（任选一种）：
 
-### 输出目录
+1. **.env 文件**（推荐）：
+   ```env
+   XHS_API_KEY=你的火山引擎 API Key
+   ```
 
-- `OUTPUT_DIR` - 输出目录（默认: ./output）
-- `PREVIEW_DIR` - 预览目录（默认: ./preview）
+2. **环境变量**：
+   ```bash
+   export XHS_API_KEY="你的火山引擎 API Key"
+   ```
 
-## 获取 API Key
+3. **运行时输入**：
+   运行程序时，会提示你输入 API Key
 
-### 火山引擎 API Key
-
-1. 访问 [火山引擎控制台](https://console.volcengine.com/)
+**获取方法**：
+1. 访问 [火山引擎](https://console.volcengine.com/)
 2. 创建应用并获取 API Key
-3. 开通豆包大模型和图片生成服务
 
-### 小红书 Cookie
+### 可选配置
 
-1. 在浏览器中登录小红书
-2. 打开开发者工具（F12）
-3. 在 Network 标签中查看任意请求的 Cookie
-4. 复制完整的 Cookie 字符串
+#### MCP 服务端
 
-## 项目结构
+如果需要实际发布到小红书，需要配置 MCP 服务端。
 
-```
-xiaohongshu-automation/
-├── src/
-│   ├── modules/
-│   │   ├── contentGenerator.ts  # 内容生成模块
-│   │   ├── imageGenerator.ts    # 图片生成模块
-│   │   ├── previewManager.ts    # 预览管理模块
-│   │   └── publisher.ts         # 发布模块
-│   ├── __tests__/               # 单元测试
-│   ├── types.ts                 # 类型定义
-│   ├── config.ts                # 配置管理
-│   ├── index.ts                 # 主入口
-│   └── cli.ts                   # CLI 入口
-├── output/                      # 输出目录
-├── preview/                     # 预览目录
-├── package.json
-├── tsconfig.json
-├── .env.example
-└── README.md
-```
+**配置方式**：
 
-## 开发
+1. **.env 文件**：
+   ```env
+   XHS_MCP_URL=http://your-mcp-server/mcp
+   XHS_MCP_TOOL=publish_content
+   ```
 
-### 构建项目
+2. **环境变量**：
+   ```bash
+   export XHS_MCP_URL="http://your-mcp-server/mcp"
+   export XHS_MCP_TOOL="publish_content"
+   ```
+
+## 输出
+
+程序会在以下目录生成文件：
+
+- `output/` - 生成的图片和内容
+- `history.json` - 发布历史记录
+
+## 示例
+
+### 生成一篇关于 AI 的笔记
 
 ```bash
-npm run build
+python xhs_auto.py -t "AI写作工具" -a "张三" -w 600
 ```
 
-### 运行测试
+### 快速发布
 
 ```bash
-npm test
+python xhs_auto.py -t "效率工具推荐" -q
 ```
 
-### 监听模式
+### 只生成不发布
 
 ```bash
-npm run dev
+python xhs_auto.py -t "产品评测" -g
 ```
 
-## 注意事项
+## 依赖
 
-- ⚠️ Cookie 包含登录凭证，请勿泄露或提交到版本控制
-- ⚠️ 小红书 Cookie 会过期，需定期更新
-- ⚠️ 避免频繁发布，以免触发平台限制
-- ⚠️ 图片生成需要消耗 API 配额
+- Python 3.7+
+- requests
+- openai
+
+## 故障排查
+
+### 问题：API 调用失败
+
+**解决**：检查 API Key 是否正确，网络连接是否正常。
+
+### 问题：图片生成失败
+
+**解决**：检查火山引擎 API 配置，确保有足够的配额。
+
+### 问题：预览无法打开
+
+**解决**：确保浏览器可用，或手动打开 `output/preview.html`。
 
 ## 许可证
 
 MIT License
 
-## 相关资源
+## 贡献
 
-- [Auto-Redbook-Skills](https://github.com/comeonzhj/Auto-Redbook-Skills)
-- [火山引擎 API 文档](https://www.volcengine.com/docs)
-- [豆包大模型](https://www.volcengine.com/product/ark)
+欢迎提交 Issue 和 Pull Request！
+
+## 联系方式
+
+- GitHub: https://github.com/vinwang/xiaohongshu-automation
