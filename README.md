@@ -72,7 +72,7 @@ python run.py
 **方式 2: 直接运行主程序**
 
 ```bash
-python src/xhs_auto.py
+python run.py
 ```
 
 **命令行参数**
@@ -87,7 +87,7 @@ python run.py -t "AI写作工具" -g        # 只生成内容
 
 ### 交互式模式
 
-运行 `python xhs_auto.py` 后，程序会提示你输入：
+运行 `python run.py` 后，程序会提示你输入：
 
 1. **主题/选题** - 你想写什么
 2. **账号** - 发布到哪个账号
@@ -104,7 +104,7 @@ python run.py -t "AI写作工具" -g        # 只生成内容
 ### 命令行参数
 
 ```bash
-python xhs_auto.py [选项]
+python run.py [选项]
 
 选项:
   -t, --topic TEXT       主题/选题
@@ -205,19 +205,19 @@ python xhs_auto.py [选项]
 ### 生成一篇关于 AI 的笔记
 
 ```bash
-python xhs_auto.py -t "AI写作工具" -a "张三" -w 600
+python run.py -t "AI写作工具" -a "张三" -w 600
 ```
 
 ### 快速发布
 
 ```bash
-python xhs_auto.py -t "效率工具推荐" -q
+python run.py -t "效率工具推荐" -q
 ```
 
 ### 只生成不发布
 
 ```bash
-python xhs_auto.py -t "产品评测" -g
+python run.py -t "产品评测" -g
 ```
 
 ## 依赖

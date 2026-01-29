@@ -22,31 +22,7 @@ except ImportError:
     print("   pip install requests openai")
     sys.exit(1)
 
-
-class Config:
-    """配置管理"""
-
-    def __init__(self):
-        self.api_key = os.getenv('DOUBAO_API_KEY', '')
-        self.model = os.getenv('DOUBAO_MODEL', 'doubao-seed-1-8-251228')
-        self.base_url = os.getenv('DOUBAO_BASE_URL', 'https://ark.cn-beijing.volces.com/api/v3')
-        self.image_model = os.getenv('DOUBAO_IMAGE_MODEL', 'doubao-seedream-4-5-251128')
-        self.xhs_cookie = os.getenv('XHS_COOKIE', '')
-        self.mcp_url = os.getenv('MCP_URL', 'http://47.109.91.65:18060/mcp')
-        self.output_dir = os.getenv('OUTPUT_DIR', './output')
-
-    def validate(self):
-        """验证配置"""
-        if not self.api_key:
-            print("⚠️  未设置 DOUBAO_API_KEY 环境变量")
-            self.api_key = input("请输入火山引擎 API Key: ").strip()
-
-        if not self.xhs_cookie:
-            print("⚠️  未设置 XHS_COOKIE 环境变量")
-            self.xhs_cookie = input("请输入小红书 Cookie (可选，按回车跳过): ").strip()
-
-        # 确保输出目录存在
-        os.makedirs(self.output_dir, exist_ok=True)
+from config import Config
 
 
 class ContentGenerator:
@@ -381,8 +357,9 @@ def main():
     print("🚀 小红书自动化发布工具 - 简化版\n")
 
     # 加载配置
-    config = Config()
-    config.validate()
+    config = Config('.env')
+    if not config.validate():
+        sys.exit(1)
 
     # 获取输入
     if len(sys.argv) > 1:

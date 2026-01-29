@@ -224,3 +224,30 @@ description: |
 ## 协作
 
 当需要让内容更自然时，会调用 `humanizer-zh` skill 进行优化，确保语言更人性化，减少AI痕迹。
+
+## 配置说明
+
+在使用本 Skill 之前，需要配置以下环境变量（推荐使用 `.env` 文件）：
+
+```env
+# 火山引擎 API 配置
+XHS_API_KEY=your_api_key_here
+XHS_API_ENDPOINT=https://ark.cn-beijing.volces.com/api/v3
+XHS_MODEL=doubao-seed-1-8-251228
+XHS_IMAGE_MODEL=doubao-seedream-4-5-251128
+
+# MCP 服务端配置（可选）
+XHS_MCP_URL=http://your-mcp-server/mcp
+XHS_MCP_TOOL=publish_content
+
+# 默认配置
+XHS_DEFAULT_ACCOUNT=你的账号
+XHS_DEFAULT_WORD_COUNT=500
+XHS_OUTPUT_DIR=./output
+```
+
+### 获取 API Key
+
+1. 访问 [火山引擎控制台](https://console.volcengine.com/)
+2. 创建应用并获取 API Key
+3. 开通豆包大模型和图片生成服务
