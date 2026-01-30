@@ -6,6 +6,7 @@
 """
 
 import os
+import getpass
 from typing import Dict, Optional
 from pathlib import Path
 
@@ -78,6 +79,10 @@ class Config:
     def output_dir(self) -> str:
         return os.getenv('XHS_OUTPUT_DIR', './output')
 
+    @property
+    def api_timeout(self) -> int:
+        return int(os.getenv('XHS_API_TIMEOUT', '60'))
+
     def validate(self) -> bool:
         """验证配置，返回是否成功"""
         if not self.api_key:
@@ -85,13 +90,22 @@ class Config:
             print("💡 配置方式:")
             print("   1. 编辑 .env 文件，设置 XHS_API_KEY")
             print("   2. 设置环境变量 XHS_API_KEY")
-            print("   3. 运行时输入")
-            self.api_key_input = input("请输入火山引擎 API Key: ").strip()
+
+            # 使用 getpass 隐藏输入
+            self.api_key_input = getpass.getpass("请输入火山引擎 API Key: ").strip()
             if not self.api_key_input:
                 print("❌ API Key 不能为空")
                 return False
+
+            # 验证 API Key 格式（示例：火山引擎 API Key 通常至少 16 个字符）
+            if len(self.api_key_input) < 16:
+                print("❌ API Key 格式不正确（至少需要 16 个字符）")
+                return False
+
             # 临时保存
             os.environ['XHS_API_KEY'] = self.api_key_input
+            # 清空明文变量
+            self.api_key_input = None
 
         # 确保输出目录存在
         os.makedirs(self.output_dir, exist_ok=True)
