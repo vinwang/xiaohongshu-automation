@@ -22,7 +22,34 @@
 - 手动创作笔记时参考
 - 理解高质量笔记的标准
 
-### 方式 2: 自动化程序（推荐用于批量生成）
+### 方式 2: MCP Server（推荐用于 AI 集成）
+
+使用 MCP Server 暴露工具给 AI 模型（Claude Desktop、Cursor 等）：
+
+- ✅ **5个 MCP 工具**：内容生成、图片生成、笔记发布、笔记查询、搜索笔记
+- ✅ **AI 原生支持**：自然语言调用，自动工具发现
+- ✅ **混合架构**：火山引擎 API + xhs SDK
+- ✅ **标准化接口**：JSON-RPC 协议，跨平台兼容
+
+**适用场景**：
+- AI 助手集成（Claude Desktop、Cursor）
+- 自然语言驱动的自动化
+- 需要多工具组合的场景
+
+**快速开始**：
+```bash
+# 安装依赖
+pip install -r requirements.txt
+
+# 配置 API Key 和 Cookie
+cp .env.example .env
+# 编辑 .env 文件，设置 XHS_API_KEY 和 XHS_COOKIE
+
+# 启动 MCP Server
+python mcp_run.py
+```
+
+### 方式 3: 自动化程序（推荐用于批量生成）
 
 使用 Python 程序自动生成和发布小红书笔记：
 
@@ -52,7 +79,59 @@ python run.py
 
 ---
 
-## 特性
+## MCP Server 使用
+
+### MCP 工具列表
+
+| 工具名称 | 描述 | 必需参数 |
+|---------|------|---------|
+| `xhs_generate_content` | 生成笔记内容（标题、正文、标签） | topic |
+| `xhs_generate_images` | 生成笔记图片（封面图和内容图） | title, content |
+| `xhs_publish_note` | 发布笔记到小红书 | title, content, images, cookie |
+| `xhs_get_note` | 获取笔记详情 | note_id, cookie |
+| `xhs_search_notes` | 搜索笔记 | keyword, cookie |
+
+### Claude Desktop 配置
+
+在 Claude Desktop 的配置文件中添加：
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "xiaohongshu-automation": {
+      "command": "python",
+      "args": ["mcp_run.py"],
+      "cwd": "D:\\www\\idea\\xhs_auto\\workflow\\.codebuddy\\skills\\xiaohongshu-automation"
+    }
+  }
+}
+```
+
+### 使用示例
+
+在 Claude Desktop 中：
+
+```
+用户：帮我生成一篇关于"AI编程助手"的小红书笔记
+
+Claude：我来帮你生成小红书笔记。
+[调用 xhs_generate_content 工具]
+[调用 xhs_generate_images 工具]
+
+✅ 已生成内容：
+标题：AI助手+只需3招+效率翻倍
+正文：...
+标签：#AI工具 #编程技巧 #效率提升
+
+✅ 已生成图片：3张（封面图 + 2张内容图）
+
+需要发布吗？
+```
+
+---
 
 - ✅ **智能内容生成** - 二极管标题法、结构化正文、智能标签
 - ✅ **AI 图片生成** - 火山引擎 Doubao-Seedream 生成高质量封面和内容图
